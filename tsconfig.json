@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,            
+    "allowSyntheticDefaultImports": true, 
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@e2e/*": ["./e2e/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "e2e/**/*"
+  ]
+}

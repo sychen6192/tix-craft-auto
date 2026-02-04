@@ -1,0 +1,22 @@
+{
+  "name": "tix-craft-auto",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "auth": "npx tsx e2e/utils/auth-generator.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.9"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "tesseract.js": "^7.0.0"
+  }
+}

@@ -1,14 +1,23 @@
 import { test as base } from '@playwright/test';
-import { LoginPage } from '@e2e/pages/LoginPage';
+import { EventPage } from '@e2e/pages/EventPage';
+import { AreaPage } from '@e2e/pages/AreaPage';
+import { TicketPage } from '@e2e/pages/TicketPage';
 
 type MyFixtures = {
-    loginPage: LoginPage;
+    eventPage: EventPage;
+    areaPage: AreaPage;
+    ticketPage: TicketPage;
 };
 
 export const test = base.extend<MyFixtures>({
-    loginPage: async ({ page }, use) => {
-        const loginPage = new LoginPage(page);
-        await use(loginPage);
+    eventPage: async ({ page }, use) => {
+        await use(new EventPage(page));
+    },
+    areaPage: async ({ page }, use) => {
+        await use(new AreaPage(page));
+    },
+    ticketPage: async ({ page }, use) => {
+        await use(new TicketPage(page));
     },
 });
 

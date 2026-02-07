@@ -1,8 +1,4 @@
-import { test } from '@playwright/test';
-import { EventPage } from '@e2e/pages/EventPage';
-import { AreaPage } from '@e2e/pages/AreaPage';
-import { TicketPage } from '@e2e/pages/TicketPage';
-
+import { test } from '@e2e/fixtures/base';
 
 interface BookingConfig {
     countdown: string;
@@ -20,11 +16,7 @@ const myBooking: BookingConfig = {
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
-test('Auto OCR Flow', async ({ page }) => {
-    const eventPage = new EventPage(page);
-    const areaPage = new AreaPage(page);
-    const ticketPage = new TicketPage(page);
-
+test('Auto OCR Ticket Flow', async ({ eventPage, areaPage, ticketPage, page }) => {
     await eventPage.goto();
     await eventPage.runCountdown(myBooking.countdown);
     await eventPage.clickEventButton(myBooking.eventKeyword);

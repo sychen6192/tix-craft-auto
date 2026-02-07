@@ -1,0 +1,19 @@
+{
+  "comment": "設定檔：testing 為練習站，production 為正式搶票",
+
+  "testing": {
+    "url": "https://ticket-training.onrender.com/",
+    "countdown": "1",
+    "eventKeyword": "G.E.M.鄧紫棋",
+    "areaKeyword": "B2層002區",
+    "quantity": 1
+  },
+
+  "production": {
+    "url": "https://tixcraft.com/activity/detail/26_anson",
+    "countdown": "0",
+    "eventKeyword": "2026/02/14",
+    "areaKeyword": "特A區",
+    "quantity": 2
+  }
+}

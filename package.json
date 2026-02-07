@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "test:dev": "cross-env ENV=testing npx playwright test",
+    "test:prod": "cross-env ENV=production npx playwright test",
     "auth": "npx tsx e2e/utils/auth-generator.ts"
   },
   "keywords": [],

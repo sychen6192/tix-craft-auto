@@ -1,4 +1,5 @@
 import { type Page, type Locator } from '@playwright/test';
+import { config } from '../config/env.config';
 
 export class EventPage {
     readonly page: Page;
@@ -14,9 +15,8 @@ export class EventPage {
     }
 
     async goto() {
-        await this.page.goto('https://ticket-training.onrender.com/');
-        // await this.page.goto('https://tixcraft.com/');
-
+        console.log(`🌍 Navigating to [${process.env.ENV || 'testing'}] environment: ${config.baseUrl}`);
+        await this.page.goto(config.baseUrl);
     }
 
     async runCountdown(seconds: string = '1') {

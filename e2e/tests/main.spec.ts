@@ -1,30 +1,22 @@
 import { test } from '@e2e/fixtures/base';
+import config from '../../booking-config.json';
 
-interface BookingConfig {
-    countdown: string;
-    eventKeyword: string;
-    areaName: string;
-    quantity: number;
-}
+const currentEnv = process.env.ENV || 'testing';
+const booking = config[currentEnv];
 
-const myBooking: BookingConfig = {
-    countdown: '1',
-    eventKeyword: 'G.E.M.鄧紫棋 I AM GLORIA',
-    areaName: 'B2層002區 6880',
-    quantity: 1
-};
+console.log(`🛠️ 目前執行環境: ${currentEnv}`);
+console.log(`🎯 目標活動: ${booking.eventKeyword}`);
 
 test('Auto OCR Ticket Flow', async ({ eventPage, areaPage, ticketPage, page }) => {
-    await eventPage.goto();
-    await eventPage.runCountdown(myBooking.countdown);
-    await eventPage.clickEventButton(myBooking.eventKeyword);
-    await areaPage.selectArea(myBooking.areaName);
+    await eventPage.goto(booking.url);
+    await eventPage.runCountdown(booking.countdown);
+    await eventPage.clickEventButton(booking.eventKeyword);
+    await areaPage.selectArea(booking.areaKeyword);
 
-    await ticketPage.selectTicket(myBooking.quantity);
+    await ticketPage.selectTicket(booking.quantity);
     await ticketPage.checkAgree();
 
-    await ticketPage.submitCaptchaAuto(myBooking.quantity);
-
+    await ticketPage.submitCaptchaAuto(booking.quantity);
     console.log('🚀 Order Process Finished!');
     await page.waitForTimeout(5000);
 });

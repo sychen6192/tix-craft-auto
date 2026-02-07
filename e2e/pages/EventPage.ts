@@ -14,21 +14,25 @@ export class EventPage {
         this.globalBuyBtn = page.getByRole('button', { name: '立即購票' });
     }
 
-    async goto() {
-        console.log(`🌍 Navigating to [${process.env.ENV || 'testing'}] environment: ${config.baseUrl}`);
-        await this.page.goto(config.baseUrl);
+    async goto(url: string) {
+        console.log(`🌍 前往目標頁面: ${url}`);
+        await this.page.goto(url);
     }
 
-    async runCountdown(seconds: string = '1') {
-        console.log(`⏳ Setting countdown to: ${seconds} seconds`);
-        await this.countdownInput.fill(seconds);
-        await this.startCountdownBtn.click();
+    async runCountdown(seconds: string = '0') {
+        if (await this.countdownInput.isVisible()) {
+            console.log(`⏳ (練習模式) 設定倒數: ${seconds} 秒`);
+            await this.countdownInput.fill(seconds);
+            await this.startCountdownBtn.click();
+        } else {
+            console.log('ℹ️ (正式模式) 未偵測到倒數輸入框，直接等待購票按鈕出現...');
+        }
 
-        console.log('👀 Waiting for countdown to finish...');
-        await this.globalBuyBtn.waitFor({ state: 'visible', timeout: 10000 });
+        console.log('👀 等待「立即購票」按鈕出現...');
+        await this.globalBuyBtn.waitFor({ state: 'visible', timeout: 0 });
         await this.globalBuyBtn.click();
 
-        console.log('✅ Countdown finished. Global "Buy Tickets" button clicked!');
+        console.log('✅ 按鈕出現！已點擊！');
     }
 
     async clickEventButton(keyword: string) {

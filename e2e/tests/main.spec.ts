@@ -14,8 +14,6 @@ const myBooking: BookingConfig = {
     quantity: 1
 };
 
-test.use({ storageState: { cookies: [], origins: [] } });
-
 test('Auto OCR Ticket Flow', async ({ eventPage, areaPage, ticketPage, page }) => {
     await eventPage.goto();
     await eventPage.runCountdown(myBooking.countdown);

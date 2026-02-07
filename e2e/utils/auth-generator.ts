@@ -1,56 +1,74 @@
 import { chromium } from 'playwright-extra';
 import stealthPlugin from 'puppeteer-extra-plugin-stealth';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import readline from 'readline';
 
+// 1. 載入隱身插件 (繞過 Facebook 的基本機器人偵測)
 chromium.use(stealthPlugin());
 
-const authFile = path.join(__dirname, '../../playwright/.auth/user.json');
+// 設定 Cookie 存放路徑
+const authDir = path.join(process.cwd(), 'playwright/.auth');
+const authFile = path.join(authDir, 'user.json');
 
-async function globalSetup() {
-    const authDir = path.dirname(authFile);
+async function run() {
+    console.log('🚀 正在啟動瀏覽器 (Facebook 登入模式)...');
+
+    // 2. 啟動瀏覽器
+    const browser = await chromium.launch({
+        headless: false, // 必須開啟視窗讓你登入
+        args: [
+            '--disable-blink-features=AutomationControlled', // 移除自動化特徵
+            '--no-sandbox',
+            '--disable-infobars',
+            '--start-maximized'
+        ]
+    });
+
+    const context = await browser.newContext({
+        viewport: null,
+        // 使用一般的 User Agent，偽裝成正常的 Mac Chrome
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    });
+
+    const page = await context.newPage();
+
+    // 3. 直接前往 Facebook 登入頁 (拓元)
+    console.log('🌍 前往拓元 Facebook 登入頁...');
+    await page.goto('https://tixcraft.com/login/facebook', { waitUntil: 'domcontentloaded' });
+
+    // 4. 等待使用者手動登入
+    console.log('\n' + '='.repeat(50));
+    console.log('⚠️  請在跳出的視窗中「手動」登入 Facebook');
+    console.log('✅  當你看到拓元首頁 (代表登入成功) 後，請回到這裡按下 [Enter] 鍵');
+    console.log('='.repeat(50) + '\n');
+
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    await new Promise<void>(resolve => {
+        rl.question('👉 登入完成了嗎？請按 [Enter] 存檔...', () => {
+            rl.close();
+            resolve();
+        });
+    });
+
+    // 5. 存檔
     if (!fs.existsSync(authDir)) {
         fs.mkdirSync(authDir, { recursive: true });
     }
 
-    const browser = await chromium.launch({
-        headless: false,
-        channel: 'chrome',
-        args: [
-            '--disable-blink-features=AutomationControlled',
-            '--use-fake-ui-for-media-stream',
-            '--window-size=1920,1080',
-            '--no-sandbox'
-        ]
-    });
-    const context = await browser.newContext({
-        viewport: { width: 1920, height: 1080 }
-    }); const page = await context.newPage();
+    await context.storageState({ path: authFile });
 
-    console.log('🔵 正在前往拓元 Google 登入頁面...');
-
-    await page.goto('https://tixcraft.com/login/google');
-
-    console.log('--------------------------------------------------');
-    console.log('🟡 請在彈出的瀏覽器中：');
-    console.log('   1. 輸入 Google 帳號密碼');
-    console.log('   2. 完成手機驗證 (如有)');
-    console.log('   3. 等待網頁自動跳轉回拓元首頁');
-    console.log('⏳ 腳本正在監聽 URL 變化...');
-    console.log('--------------------------------------------------');
-
-    await page.waitForURL((url) => {
-        return url.href === 'https://tixcraft.com/' || url.href === 'https://tixcraft.com';
-    }, { timeout: 0 });
-
-    console.log('🟢 偵測到已跳轉回首頁！正在擷取 Cookies...');
-
-    await page.context().storageState({ path: authFile });
-
-    console.log(`✅ Auth 檔案已成功建立於: ${authFile}`);
-    console.log('🚀 現在你可以執行測試了！');
+    console.log(`\n💾 Session 已儲存至: ${authFile}`);
+    console.log('🎉 搞定！下次跑測試就會自動用這個 Facebook 帳號了。');
 
     await browser.close();
 }
 
-globalSetup();
+run().catch(error => {
+    console.error('❌ 發生錯誤:', error);
+    process.exit(1);
+});
